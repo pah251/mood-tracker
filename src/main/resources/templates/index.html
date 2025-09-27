@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Tracker</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7f9;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+        }
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box; /* Important for padding */
+        }
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        button {
+            width: 100%;
+            padding: 0.85rem;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        hr {
+            border: none;
+            border-top: 1px solid #eee;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Track Your Day</h1>
+
+    <form th:action="@{/add}" th:object="${moodEntryForm}" method="post">
+
+        <fieldset>
+            <legend style="font-weight: 700; font-size: 1.2rem; margin-bottom: 1rem;">Daily Log (Once per day)</legend>
+            <div class="form-group">
+                <label for="sleepHours">Sleep (Hours)</label>
+                <input type="number" step="0.1" id="sleepHours" th:field="*{sleepHours}" placeholder="e.g., 7.5">
+            </div>
+            <div class="form-group">
+                <label for="sleepScore">Sleep Score (1-100)</label>
+                <input type="number" id="sleepScore" th:field="*{sleepScore}" placeholder="e.g., 85">
+            </div>
+            <div class="form-group">
+                <label for="alcoholConsumption">Consumed units of alcohol</label>
+                <input type="number" id="alcoholConsumption" th:field="*{alcoholConsumption}" placeholder="0">
+            </div>
+            <div class="form-group">
+                <label for="caffeineConsumption">Consumed caffeinated beverages</label>
+                <input type="number" id="caffeineConsumption" th:field="*{caffeineConsumption}" placeholder="0">
+            </div>
+        </fieldset>
+
+        <hr>
+
+        <fieldset>
+            <legend style="font-weight: 700; font-size: 1.2rem; margin-bottom: 1rem;">Mood Entry (As often as you like)</legend>
+            <div class="form-group">
+                <label for="moodScore">Mood Score (1=Bad, 5=Great)</label>
+                <input type="number" id="moodScore" th:field="*{moodScore}" min="1" max="5" required>
+            </div>
+            <div class="form-group">
+                <label for="activityName">Activity</label>
+                <input type="text" id="activityName" th:field="*{activityName}" list="activities" placeholder="e.g., Work" required>
+                <datalist id="activities">
+                    <option value="Work"></option>
+                    <option value="Study"></option>
+                    <option value="Free Time"></option>
+                    <option value="Exercise"></option>
+                    <option value="Chores"></option>
+                </datalist>
+            </div>
+            <div class="form-group">
+                <label for="description">Description (Optional)</label>
+                <textarea id="description" th:field="*{description}" placeholder="Briefly describe what's on your mind..."></textarea>
+            </div>
+        </fieldset>
+
+        <button type="submit">Save Entry</button>
+    </form>
+</div>
+
+</body>
+</html>
