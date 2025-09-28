@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class MoodTrackerService {
@@ -27,6 +29,10 @@ public class MoodTrackerService {
         this.moodEntryRepository = moodEntryRepository;
     }
 
+    /**
+     * Function to process adding a new MoodEntry from the front-end.
+     * @param formDTO DTO containing both DailyLog and MoodEntry data
+     */
     @Transactional
     public void saveNewEntry(MoodEntryFormDTO formDTO)
     {
@@ -67,8 +73,34 @@ public class MoodTrackerService {
         moodEntryRepository.save(moodEntry);
     }
 
+    /**
+     * Get all entered mood entries, sort by timestamp
+     * @return List of type MoodEntry
+     */
     public List<MoodEntry> findAllEntries()
     {
         return moodEntryRepository.findAllByOrderByTimestampDesc();
+    }
+
+    /**
+     * Function to calculate the average mood for each day over the last week.
+     * Dumb function that does only calculates from NOW (used as default in dashboard)
+     * @return Map containing the average mood for each day
+     */
+    public Map<LocalDate, Double> getAverageMoodForLastWeek()
+    {
+        // create the start and end timestamps
+        LocalDateTime end = LocalDateTime.now();
+        LocalDateTime start = end.minusDays(7);
+
+        // retrieve entries
+        List<MoodEntry> entries = moodEntryRepository.findByTimestampBetween(start, end);
+
+        // calculate the averages and return
+        return entries.stream()
+                .collect(Collectors.groupingBy(
+                        entry -> entry.getTimestamp().toLocalDate(),
+                        Collectors.averagingInt(MoodEntry::getMoodScore)
+                ));
     }
 }

@@ -9,7 +9,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 public class MoodTrackerController {
@@ -56,6 +62,22 @@ public class MoodTrackerController {
     {
         List<MoodEntry> entries = moodTrackerService.findAllEntries();
         model.addAttribute("entries", entries);
+
+        // get the averages for the last week, sort them into an array list
+        Map<LocalDate, Double> weeklyMoodData = moodTrackerService.getAverageMoodForLastWeek();
+        List<Map.Entry<LocalDate, Double>> sortedData = new ArrayList<>(weeklyMoodData.entrySet());
+
+        // prepare lists for labels (dates) and values (average scores)
+        List<String> chartLabels = sortedData.stream()
+                .map(entry -> entry.getKey().format(DateTimeFormatter.ofPattern("MMM dd")))
+                .collect(Collectors.toList());
+        List<Double> chartValues = sortedData.stream()
+                .map(Map.Entry::getValue)
+                .collect(Collectors.toList());
+
+        model.addAttribute("chartLabels", chartLabels);
+        model.addAttribute("chartValues", chartValues);
+
         return DASHBOARD;
     }
 }
