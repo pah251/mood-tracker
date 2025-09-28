@@ -124,11 +124,21 @@ public class MoodTrackerService {
      */
     public String generateAiPromptForLastWeek()
     {
+        return generateAiPromptForLastWeek(getCurrentUser());
+    }
+
+    /**
+     * Default function for dashboard to generate prompt suitable for any LLM to get
+     * an analysis and list of recommendations on how to improve mood based on entered data.
+     * @return Formatted prompt, ready for copy+paste.
+     */
+    public String generateAiPromptForLastWeek(User user)
+    {
         // get start and end timestamps (1 week)
         LocalDateTime end = LocalDateTime.now();
         LocalDateTime start = end.minusDays(7);
 
-        List<MoodEntry> entries = moodEntryRepository.findByUserAndTimestampBetween(getCurrentUser(), start, end);
+        List<MoodEntry> entries = moodEntryRepository.findByUserAndTimestampBetween(user, start, end);
 
         if (entries.isEmpty())
         {
