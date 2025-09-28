@@ -3,27 +3,28 @@ package com.example.mood_tracker.service;
 import com.example.mood_tracker.dto.MoodEntryFormDTO;
 import com.example.mood_tracker.model.Activity;
 import com.example.mood_tracker.model.DailyLog;
-import com.example.mood_tracker.model.HourlyLog;
+import com.example.mood_tracker.model.MoodEntry;
 import com.example.mood_tracker.repository.ActivityRepository;
 import com.example.mood_tracker.repository.DailyLogRepository;
-import com.example.mood_tracker.repository.HourlyLogRepository;
+import com.example.mood_tracker.repository.MoodEntryRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class MoodTrackerService {
     private final ActivityRepository activityRepository;
     private final DailyLogRepository dailyLogRepository;
-    private final HourlyLogRepository hourlyLogRepository;
+    private final MoodEntryRepository moodEntryRepository;
 
-    public MoodTrackerService(ActivityRepository activityRepository, DailyLogRepository dailyLogRepository, HourlyLogRepository hourlyLogRepository)
+    public MoodTrackerService(ActivityRepository activityRepository, DailyLogRepository dailyLogRepository, MoodEntryRepository moodEntryRepository)
     {
         this.activityRepository = activityRepository;
         this.dailyLogRepository = dailyLogRepository;
-        this.hourlyLogRepository = hourlyLogRepository;
+        this.moodEntryRepository = moodEntryRepository;
     }
 
     @Transactional
@@ -56,13 +57,18 @@ public class MoodTrackerService {
                 });
 
         // create and save the new MoodEntry
-        HourlyLog hourlyLog = new HourlyLog();
-        hourlyLog.setTimestamp(LocalDateTime.now());
-        hourlyLog.setMoodScore(formDTO.moodScore());
-        hourlyLog.setDescription(formDTO.description());
-        hourlyLog.setActivity(activity);
-        hourlyLog.setDailyLog(dailyLog);
+        MoodEntry moodEntry = new MoodEntry();
+        moodEntry.setTimestamp(LocalDateTime.now());
+        moodEntry.setMoodScore(formDTO.moodScore());
+        moodEntry.setDescription(formDTO.description());
+        moodEntry.setActivity(activity);
+        moodEntry.setDailyLog(dailyLog);
 
-        hourlyLogRepository.save(hourlyLog);
+        moodEntryRepository.save(moodEntry);
+    }
+
+    public List<MoodEntry> findAllEntries()
+    {
+        return moodEntryRepository.findAllByOrderByTimestampDesc();
     }
 }
