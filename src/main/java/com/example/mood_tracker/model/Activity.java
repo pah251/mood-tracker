@@ -1,26 +1,35 @@
 package com.example.mood_tracker.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class Activity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
 
-    public Activity()
-    {
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    public Activity(String name, User user)
+    {
+        this.name = name;
+        this.user = user;
     }
 
     public Activity(String name)
     {
         this.name = name;
+    }
+
+    public Activity()
+    {
+
     }
 
     public String getName() {
@@ -37,5 +46,13 @@ public class Activity {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

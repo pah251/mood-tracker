@@ -78,6 +78,9 @@ public class MoodTrackerController {
         model.addAttribute("chartLabels", chartLabels);
         model.addAttribute("chartValues", chartValues);
 
+        String aiPrompt = moodTrackerService.generateAiPromptForLastWeek();
+        model.addAttribute("aiPrompt", aiPrompt);
+
         return DASHBOARD;
     }
 }
